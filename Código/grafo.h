@@ -8,8 +8,12 @@
 #include <ctime>
 #include <string>
 #include <fstream>
+#include <chrono>
+#include <cmath>
+#include <iomanip>
 
 using namespace std;
+using namespace std::chrono;
 
 random_device rd;  // Inicializa la semilla del generador de números aleatorios
 mt19937 gen(rd()); // Generador de números aleatorios
@@ -25,9 +29,10 @@ struct Nodo {
 
 // Estructura que representa el grafo
 class Grafo {
+public:
     vector<Nodo> nodos; // Lista de nodos en el grafo
 
-public:
+
     // Constructor de un grafo con V vértices
     Grafo(int V){
         for (int i = 0; i < V; i++) {

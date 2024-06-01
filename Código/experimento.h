@@ -7,7 +7,24 @@
 Grafo generarGrafo(int v, int e) {
     Grafo grafo(v);
     uniform_real_distribution<double> randDouble(0.0, 1.0);
-    
+
+    // Verificar el mínimo número de aristas (v - 1)
+    int minAristas = v - 1;
+    if (e < minAristas) {
+        cerr << "Error: El número mínimo de aristas para un grafo con " << v << " nodos es " << minAristas << endl;
+        Grafo grafoError(2);
+        grafoError.agregarArista(0, 1, 66.6);
+        return grafoError; // Retorna un grafo de error
+    }
+
+    // Verificar el máximo número de aristas (v*(v-1)/2)
+    int maxAristas = (v * (v - 1)) / 2;
+    if (e > maxAristas) {
+        cerr << "Error: El número máximo de aristas para un grafo con " << v << " nodos es " << maxAristas << endl;
+        Grafo grafoError(2);
+        grafoError.agregarArista(0, 1, 66.6);
+        return grafoError; // Retorna un grafo de error
+    }
 
     // Se establecen v − 1 aristas para generar un árbol cobertor
     for (int i = 1; i < v; i++) {
@@ -54,5 +71,45 @@ void imprimirGrafo(Grafo& grafo, const std::string& filename) {
 
     file.close();
 }
+
+// Función para contar las aristas de un grafo
+int contarAristas(Grafo grafo) {
+    int numAristas = 0;
+
+    for (const Nodo& nodo : grafo.nodos) {
+        // Sumar el número de vecinos del nodo
+        numAristas += nodo.vecinos.size();
+    }
+
+    // Cada arista se cuenta dos veces en un grafo no dirigido, así que dividimos por 2
+    return numAristas / 2;
+}
+
+//Mide el tiempo de ejecución de un algoritmo que toma un Grafo como argumento.
+//Recibe el puntero a una función que toma un grafo como argumento y devuelve un entero  (esto después se cambia por un par de vectores que es lo que retorna Dijkstra)
+//También recibe el grafo sobre el que se va a ejecutar el algoritmo.
+//Retorna el tiempo de ejecución del algoritmo en milisegundos.
+double medirTiempo(int (algoritmo)(Grafo), Grafo& grafo) {
+    auto start = high_resolution_clock::now(); // Toma el tiempo de inicio
+    int resultado = algoritmo(grafo); // Se ejecuta el algoritmo
+    auto stop = high_resolution_clock::now(); // Toma el tiempo de finalización
+    auto duration = duration_cast<microseconds>(stop - start); // Calcular la duración en microsegundos
+    return duration.count() / 1000.0; // Convertir a milisegundos
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #endif
