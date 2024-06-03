@@ -1,73 +1,12 @@
-#ifndef DIJKTRAMINHEAP_H
-#define DIJKTRAMINHEAP_H
+#ifndef DIJKTRAFIBHEAP_H
+#define DIJKTRAFIBHEAP_H
 
 #include "grafo.h"
 
-#endif
-
-#include <vector>
-#include <iostream>
-#include <limits>
-#include <cmath> // Include the <cmath> header for log2 function
-#include <unordered_map>
-
 using namespace std;
 
-
-// Estructura que representa un nodo
-struct Nodo {
-    int id;  // id del nodo
-    vector<int> vecinos;  // Lista de nodos adyacentes
-    vector<int> pesos; // Pesos de las aristas 
-};
-
-// Estructura que representa el grafo
-class Grafo {
-    vector<Nodo> nodos;
-
-public:
-    // Constructor de un grafo con V vértices
-    Grafo(int V){
-        nodos.resize(V);
-    }
-
-    // Método para agregar una arista al grafo
-    void agregarArista(int v, int destino, int peso) {
-        nodos[v].vecinos.push_back(destino);
-        nodos[v].pesos.push_back(peso);
-        nodos[destino].vecinos.push_back(v);
-        nodos[destino].pesos.push_back(peso);
-    }
-    
-    // Método para obtener la lista de adyacencia de un nodo
-    vector<int>& getVecinos(int v) {
-        return nodos[v].vecinos;
-    }
-
-    // Método para obtener los pesos de las aristas adyacentes a un nodo
-    vector<int>& getPesos(int v) {
-        return nodos[v].pesos;
-    }
-
-    // Método para obtener el número de vértices en el grafo
-    int getV() {
-        return nodos.size();
-    }
-};
-
-// Estructura que representa un par de la forma (distancia, nodo). Será almacenado en Q
-struct Par {
-    int nodo;  // Índice del nodo en el grafo
-    int distancia;  // Distancia mínima desde el nodo de origen
-
-    Par(int nodo, int distancia) {
-        this->nodo = nodo;
-        this->distancia = distancia;  
-    }
-};
-
 struct NodeFib {
-    Par* data;     // Par que contiene nodo y distancia (antes key)
+    Par* data;     // Par que contiene nodo y distancia
     NodeFib* parent;
     NodeFib* child;
     NodeFib* left;
@@ -179,10 +118,12 @@ public:
         int D = static_cast<int>(std::log2(n)) + 1;
         std::vector<NodeFib*> A(D, nullptr);
 
+        /*
         // Initialize the array A
         for (int i = 0; i <= D; ++i) {
             A[i] = nullptr;
         }
+        */
 
         // guardo nodos en root list
         std::vector<NodeFib*> rootNodes;
@@ -312,7 +253,8 @@ public:
 
 
 // Implementación del algoritmo de Dijkstra
-pair<vector<int>,vector<int>> dijkstra(Grafo& grafo,Nodo* raiz) {
+pair<vector<int>,vector<int>> dijkstraFibHeap(Grafo& grafo) {
+    Nodo raiz = grafo.getNodo(0);
     int V = grafo.getV();
     vector<int> distancias(V, numeric_limits<int>::max());  // distancia mínimas
     vector<int> previos(V, -1);  // Nodos previos en el camino más corto
@@ -320,17 +262,17 @@ pair<vector<int>,vector<int>> dijkstra(Grafo& grafo,Nodo* raiz) {
     std::unordered_map<int, NodeFib*> nodeMap; // Mapea el id del nodo a NodeFib en el heap
 
     // Paso 3: Inicializar la distancia del nodo raíz como 0
-    distancias[raiz->id] = 0;
-    previos[raiz->id] = -1;
-    Par* raizPar = new Par(raiz->id, 0);
+    distancias[raiz.id] = 0;
+    previos[raiz.id] = -1;
+    Par* raizPar = new Par(0, raiz.id);
     NodeFib* raizNodo = new NodeFib(raizPar);
     heap.insertNode(raizNodo);
-    nodeMap[raiz->id] = heap.getMin(); // Guardamos el nodo en el mapa
+    nodeMap[raiz.id] = heap.getMin(); // Guardamos el nodo en el mapa
 
     // Paso 4: Inicializar las distancias mínimas para cada nodo
     for (int v = 0; v < V; ++v) {
-        if (v != raiz->id) {
-            Par* par = new Par(v, numeric_limits<int>::max());
+        if (v != raiz.id) {
+            Par* par = new Par(numeric_limits<int>::max(), v);
             NodeFib* x = new NodeFib(par);
             heap.insertNode(x);
             nodeMap[v] = x; // Guardamos el nodo en el mapa
@@ -345,7 +287,7 @@ pair<vector<int>,vector<int>> dijkstra(Grafo& grafo,Nodo* raiz) {
         int v = parMin->nodo;
 
         vector<int>& vecinos = grafo.getVecinos(v);
-        vector<int>& pesos = grafo.getPesos(v);
+        vector<double>& pesos = grafo.getPesos(v);
 
         // Paso 6b: Relajar todas las aristas adyacentes al nodo actual
         for (int i = 0; i < vecinos.size(); ++i) {
@@ -367,3 +309,5 @@ pair<vector<int>,vector<int>> dijkstra(Grafo& grafo,Nodo* raiz) {
     // Paso 7: Retornar un par con los arreglos previos y distancias
     return {previos, distancias};
 }
+
+#endif

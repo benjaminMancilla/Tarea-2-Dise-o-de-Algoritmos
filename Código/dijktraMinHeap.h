@@ -3,14 +3,6 @@
 
 #include "grafo.h"
 
-// Estructura que representa un par de la forma (distancia, nodo). Será almacenado en Q
-struct Par {
-    double distancia;  // Distancia mínima desde el nodo de origen
-    int nodo;  // Índice del nodo en el grafo
-
-    Par(double distancia, int nodo) : distancia(distancia), nodo(nodo) {}
-};
-
 class Q {
     vector<Par> heap;
     vector<int> pos;  // Almacena la posición de cada par en el Heap   

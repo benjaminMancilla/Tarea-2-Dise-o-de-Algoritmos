@@ -11,6 +11,7 @@
 #include <chrono>
 #include <cmath>
 #include <iomanip>
+#include <unordered_map>
 
 using namespace std;
 using namespace std::chrono;
@@ -29,10 +30,9 @@ struct Nodo {
 
 // Estructura que representa el grafo
 class Grafo {
-public:
     vector<Nodo> nodos; // Lista de nodos en el grafo
 
-
+public:
     // Constructor de un grafo con V vértices
     Grafo(int V){
         for (int i = 0; i < V; i++) {
@@ -58,6 +58,11 @@ public:
         }
         return false;
     }
+
+    // Método para obtener un nodo por su id
+    vector<Nodo>& getNodos(){
+        return nodos;
+    }
     
     // Método para obtener la lista de adyacencia de un nodo
     vector<int>& getVecinos(int v) {
@@ -73,6 +78,24 @@ public:
     int getV() {
         return nodos.size();
     }
+
+    // Método para obtener un nodo por su id
+    Nodo& getNodo(int id) {
+        for (Nodo& nodo : nodos) {
+            if (nodo.id == id) {
+                return nodo;
+            }
+        }
+        throw std::invalid_argument("El nodo con el id especificado no existe en el grafo.");
+    }
+};
+
+// Estructura que representa un par de la forma (distancia, nodo). Será almacenado en Q
+struct Par {
+    double distancia;  // Distancia mínima desde el nodo de origen
+    int nodo;  // Índice del nodo en el grafo
+
+    Par(double distancia, int nodo) : distancia(distancia), nodo(nodo) {}
 };
 
 #endif
