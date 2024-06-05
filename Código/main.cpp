@@ -26,6 +26,7 @@ void testGenerarGrafo(){
     }
 }
 
+
 void testConocido() {
 
     Grafo grafo(4);
@@ -51,8 +52,29 @@ void testConocido() {
 
 }
 
+
+void testSimple() {
+
+    int i = 5;
+    int j = 5;
+    Grafo grafo = generarGrafo(pow(2, i), (pow(2, j)));
+    pair<vector<int>,vector<double>> par = dijkstraFibHeap(grafo);
+
+    cout << "Los resultados de los nodos previos:\n";
+    for (int i = 0; i < par.first.size(); ++i) {
+        cout << "Nodo " << i << ": " << par.first[i] << "\n";
+    }
+
+    cout << "Los resultados de las distancias:\n";
+    for (int i = 0; i < par.second.size(); ++i) {
+        cout << "Nodo " << i << ": " << par.second[i] << "\n";
+    }
+}
+
+
 int main() {
-    testConocido();
+
+    testSimple();
     
     return 0;
 }

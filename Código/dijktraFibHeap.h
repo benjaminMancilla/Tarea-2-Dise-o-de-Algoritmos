@@ -6,7 +6,7 @@
 using namespace std;
 
 struct NodeFib {
-    Par* data;     // Par que contiene nodo y distancia
+    Par* data;     // Par que contiene nodo y distancia (antes key)
     NodeFib* parent;
     NodeFib* child;
     NodeFib* left;
@@ -233,7 +233,7 @@ public:
     }
 
     
-    void decreaseKey(NodeFib* x, int newDistance) {
+    void decreaseKey(NodeFib* x, double newDistance) {
         if (newDistance > x->data->distancia) {
             throw std::invalid_argument("New key is greater than current key");
             return;
@@ -253,26 +253,25 @@ public:
 
 
 // Implementación del algoritmo de Dijkstra
-pair<vector<int>,vector<int>> dijkstraFibHeap(Grafo& grafo) {
-    Nodo raiz = grafo.getNodo(0);
+pair<vector<int>,vector<double>> dijkstraFibHeap(Grafo& grafo) {
     int V = grafo.getV();
-    vector<int> distancias(V, numeric_limits<int>::max());  // distancia mínimas
+    vector<double> distancias(V, numeric_limits<double>::max());  // distancia mínimas
     vector<int> previos(V, -1);  // Nodos previos en el camino más corto
     FibonacciHeap heap;  // Heap para mantener los nodos no visitados
     std::unordered_map<int, NodeFib*> nodeMap; // Mapea el id del nodo a NodeFib en el heap
 
     // Paso 3: Inicializar la distancia del nodo raíz como 0
-    distancias[raiz.id] = 0;
-    previos[raiz.id] = -1;
-    Par* raizPar = new Par(0, raiz.id);
+    distancias[0] = 0;
+    previos[0] = -1;
+    Par* raizPar = new Par(0.0, 0);
     NodeFib* raizNodo = new NodeFib(raizPar);
     heap.insertNode(raizNodo);
-    nodeMap[raiz.id] = heap.getMin(); // Guardamos el nodo en el mapa
+    nodeMap[0] = heap.getMin(); // Guardamos el nodo en el mapa
 
     // Paso 4: Inicializar las distancias mínimas para cada nodo
     for (int v = 0; v < V; ++v) {
-        if (v != raiz.id) {
-            Par* par = new Par(numeric_limits<int>::max(), v);
+        if (v != 0) {
+            Par* par = new Par(numeric_limits<double>::max(), v);
             NodeFib* x = new NodeFib(par);
             heap.insertNode(x);
             nodeMap[v] = x; // Guardamos el nodo en el mapa
@@ -293,7 +292,7 @@ pair<vector<int>,vector<int>> dijkstraFibHeap(Grafo& grafo) {
         for (int i = 0; i < vecinos.size(); ++i) {
 
             int u = vecinos[i];// Nodo vecino
-            int peso = pesos[i];// Peso de la arista
+            double peso = pesos[i];// Peso de la arista
             // Si la distancia de u es mayor que la distancia de v + peso
             if (distancias[u] > distancias[v] + peso) {
                 // Actualizar la distancia de v

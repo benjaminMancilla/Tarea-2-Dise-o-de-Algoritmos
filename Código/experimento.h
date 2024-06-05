@@ -2,6 +2,9 @@
 #define EXPERIMENTO_H
 
 #include "grafo.h"
+#include "dijktraFibHeap.h"
+#include "dijktraMinHeap.h"
+
 
 // Función para generar un grafo aleatorio no dirigido con v vértices y e aristas con pesos aleatorios entre (0, 1]
 Grafo generarGrafo(int v, int e) {
@@ -73,7 +76,7 @@ void imprimirGrafo(Grafo& grafo, const std::string& filename) {
 }
 
 // Función para contar las aristas de un grafo
-int contarAristas(Grafo grafo) {
+pair<vector<int>, vector<double>> contarAristas(Grafo& grafo) {
     int numAristas = 0;
 
     for (const Nodo& nodo : grafo.getNodos()) {
@@ -82,22 +85,26 @@ int contarAristas(Grafo grafo) {
     }
 
     // Cada arista se cuenta dos veces en un grafo no dirigido, así que dividimos por 2
-    return numAristas / 2;
+    vector<int> vec;
+    vec.push_back(numAristas / 2);
+    vector<double> vec2;
+    vec2.push_back(0.0);
+    return pair<vector<int>, vector<double>>(vec, vec2);
 }
 
 //Mide el tiempo de ejecución de un algoritmo que toma un Grafo como argumento.
 //Recibe el puntero a una función que toma un grafo como argumento y devuelve un entero  (esto después se cambia por un par de vectores que es lo que retorna Dijkstra)
 //También recibe el grafo sobre el que se va a ejecutar el algoritmo.
 //Retorna el tiempo de ejecución del algoritmo en milisegundos.
-double medirTiempo(int (algoritmo)(Grafo), Grafo& grafo) {
+double medirTiempo(pair<vector<int>, vector<double>> (algoritmo)(Grafo&), Grafo& grafo) {
     auto start = high_resolution_clock::now(); // Toma el tiempo de inicio
-    int resultado = algoritmo(grafo); // Se ejecuta el algoritmo
+    pair<vector<int>, vector<double>> resultado = algoritmo(grafo); // Se ejecuta el algoritmo
     auto stop = high_resolution_clock::now(); // Toma el tiempo de finalización
     auto duration = duration_cast<microseconds>(stop - start); // Calcular la duración en microsegundos
     return duration.count() / 1000.0; // Convertir a milisegundos
 }
 
-void experimento() {
+void experimento(){
     cout << "\n######################### Inicia el programa #########################" << endl;
     ofstream archivo1("t_minheap_ms.csv");
     ofstream archivo2("t_fibheap_ms.csv");
@@ -125,10 +132,10 @@ void experimento() {
 
                 Grafo grafo = generarGrafo(pow(2, i), pow(2, j));
             
-                double tiempo_min = medirTiempo(contarAristas, grafo);
+                double tiempo_min = medirTiempo(dijkstraMinHeap, grafo);
                 archivo1 << "," << fixed << setprecision(2) << tiempo_min;
 
-                double tiempo_fib = medirTiempo(contarAristas, grafo);
+                double tiempo_fib = medirTiempo(dijkstraFibHeap, grafo);
                 archivo2 << "," << fixed << setprecision(2) << tiempo_fib;
             }
 
@@ -147,9 +154,8 @@ void experimento() {
     cout << "\n======================================================================\n" << endl;
     cout << "Se guardan resultados en archivos t_minheap_ms.csv y t_fibheap_ms.csv\n" << endl;
     cout << "######################### Termina el programa ########################\n" << endl;
+    
 }
-
-
 
 
 
