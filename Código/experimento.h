@@ -67,7 +67,7 @@ void imprimirGrafo(Grafo& grafo, const std::string& filename) {
     for (int i = 0; i < V; i++) {
         std::vector<int> vecinos = grafo.getVecinos(i);
         std::vector<double> pesos = grafo.getPesos(i);
-        for (int j = 0; j < vecinos.size(); j++) {
+        for (unsigned int j = 0; j < vecinos.size(); j++) {
             file << i << " " << vecinos[j] << " " << pesos[j] << std::endl;
         }
     }

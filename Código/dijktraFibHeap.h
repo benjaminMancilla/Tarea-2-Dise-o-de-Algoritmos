@@ -18,13 +18,23 @@ struct NodeFib {
         : data(p), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false) {}
 };
 
+
+
 class FibonacciHeap {
 private:
     NodeFib* min;
     int n;
 
     void insertIntoRootList(NodeFib* x) {
-        if (!min) {
+        // if (x == nullptr) {
+        //     std::cerr << "Error: node is nullptr in insertIntoRootList\n";
+        //     return;
+        // }
+        // if (min == nullptr) {
+        //     std::cerr << "Error: min is nullptr in insertIntoRootList\n";
+        //     return;
+        // }
+        if (min == nullptr) {
             min = x;
         } else {
             x->left = min;
@@ -89,17 +99,23 @@ public:
         }
 
         H->n = H1->n + H2->n;
+        delete H1;
+        delete H2;
         return H;
     }
 
 
     //linkea dos arboles del mismo degree
     void link(NodeFib* y, NodeFib* x) {
+        if (y == nullptr || x == nullptr || y->data == nullptr || x->data == nullptr) {
+            std::cerr << "Error: y, x, y->data, or x->data is nullptr in link\n";
+            return;
+        }
         y->left->right = y->right;
         y->right->left = y->left;
 
         y->parent = x;
-        if (!x->child) {
+        if (x->child == nullptr) {
             x->child = y;
             y->right = y;
             y->left = y;
@@ -112,50 +128,65 @@ public:
         x->degree++;
         y->mark = false;
     }
-
     
     void consolidate() {
-        int D = static_cast<int>(std::log2(n)) + 1;
+        int D = static_cast<int>(std::log2(n)) + 2;
         std::vector<NodeFib*> A(D, nullptr);
 
-        /*
-        // Initialize the array A
-        for (int i = 0; i <= D; ++i) {
-            A[i] = nullptr;
-        }
-        */
+        int lenghtRootList = 0;
+        NodeFib* startAux = min;
+        NodeFib* p = min;
+        do {
+            lenghtRootList++;
+            p = p->right;
+        } while (p != startAux);
 
-        // guardo nodos en root list
-        std::vector<NodeFib*> rootNodes;
-        NodeFib* x = min;
-        if (x) {
-            do {
-                rootNodes.push_back(x);
-                x = x->right;
-            } while (x != min);
-        }
+        // Inicializar el array A
+        // for (int i = 0; i <= D; ++i) {
+        //     A[i] = nullptr;
+        // }
 
-        // para cada nodo en root list
-        for (NodeFib* w : rootNodes) {
+        if (min == nullptr) return; // Si el heap está vacío, no hay nada que consolidar
+
+        NodeFib* start = min;
+        NodeFib* w = min;
+        int circularIndex = 0;
+
+        do {
             NodeFib* x = w;
+            NodeFib* next = w->right; // Guardar la referencia al siguiente nodo
             int d = x->degree;
+
+
+            // Consolidar árboles del mismo grado
             while (A[d] != nullptr) {
+
                 NodeFib* y = A[d];
-                if (x->data->distancia > y->data->distancia){
-                    std::swap(x, y);
+                if (x->data->distancia > y->data->distancia) {
+                    link(x, y); //link esta bien pero revisar
+                    x = y;
                 }
-                link(y, x);
+
+                else {
+                    link(y, x);
+                }
+                
                 A[d] = nullptr;
                 d++;
             }
             A[d] = x;
-        }
 
-        //reconstruyo el nodo
+            // Moverse al siguiente nodo
+            w = next;
+            circularIndex++;
+
+        } while (circularIndex < lenghtRootList);
+
+        // Reconstruir la lista de raíz y encontrar el nuevo mínimo
         min = nullptr;
         for (NodeFib* node : A) {
-            if (node!=nullptr) {
-                if (min==nullptr) {
+            if (node != nullptr) {
+                if (min == nullptr) {
                     node->left = node;
                     node->right = node;
                     min = node;
@@ -168,6 +199,7 @@ public:
             }
         }
     }
+
 
     // Extraer minimo
     NodeFib* extractMin() {
@@ -189,6 +221,7 @@ public:
             if (z == z->right) {
                 min = nullptr;
             } else {
+    
                 min = z->right;
                 consolidate();
             }
@@ -244,6 +277,23 @@ public:
             cut(x, y);
             cascadingCut(y);
         }
+
+        if (x == nullptr) {
+            std::cerr << "Error: x is nullptr\n";
+            return;
+        }
+        if (x->data == nullptr) {
+            std::cerr << "Error: x->data is nullptr\n";
+            return;
+        }
+        if (min == nullptr) {
+            std::cerr << "Error: min is nullptr\n";
+            return;
+        }
+        if (min->data == nullptr) {
+            std::cerr << "Error: min->data is nullptr\n";
+            return;
+        }
         if (x->data->distancia < min->data->distancia) {
             min = x;
         }
@@ -278,18 +328,22 @@ pair<vector<int>,vector<double>> dijkstraFibHeap(Grafo& grafo) {
         }
     }
 
+
+
     // Paso 6: Ejecutar el algoritmo de Dijkstra
     while (heap.getMin() != nullptr) {
+
         // Paso 6a: Obtener el par con la distancia mínima
         NodeFib* nodeMin = heap.extractMin();
         Par* parMin = nodeMin->data;
         int v = parMin->nodo;
 
+
         vector<int>& vecinos = grafo.getVecinos(v);
         vector<double>& pesos = grafo.getPesos(v);
 
         // Paso 6b: Relajar todas las aristas adyacentes al nodo actual
-        for (int i = 0; i < vecinos.size(); ++i) {
+        for (unsigned int i = 0; i < vecinos.size(); ++i) {
 
             int u = vecinos[i];// Nodo vecino
             double peso = pesos[i];// Peso de la arista

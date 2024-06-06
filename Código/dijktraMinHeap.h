@@ -57,8 +57,8 @@ private:
     // Método para mantener la propiedad del Heap (bajar un nodo)
     void siftDown(int i) {
         int indiceMenor = i;
-        int izquierdo = hijoIzquierdo(i);
-        int derecho = hijoDerecho(i);
+        unsigned int izquierdo = hijoIzquierdo(i);
+        unsigned int derecho = hijoDerecho(i);
         if (izquierdo < heap.size() && heap[izquierdo].distancia < heap[indiceMenor].distancia)
             indiceMenor = izquierdo;
         if (derecho < heap.size() && heap[derecho].distancia < heap[indiceMenor].distancia)
@@ -109,7 +109,7 @@ pair<vector<int>, vector<double>> dijkstraMinHeap(Grafo& grafo) {
         int v = parMin.nodo;
 
         // Paso 6b: Relajar todas las aristas adyacentes al nodo actual
-        for (int i = 0; i < grafo.getVecinos(v).size(); i++) {
+        for (unsigned int i = 0; i < grafo.getVecinos(v).size(); i++) {
             int u = grafo.getVecinos(v)[i]; // Nodo vecino
             double peso = grafo.getPesos(v)[i]; // Peso de la arista
             // Si la distancia de u es mayor que la distancia de v + peso
