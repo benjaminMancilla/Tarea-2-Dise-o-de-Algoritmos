@@ -67,7 +67,7 @@ void imprimirGrafo(Grafo& grafo, const std::string& filename) {
     for (int i = 0; i < V; i++) {
         std::vector<int> vecinos = grafo.getVecinos(i);
         std::vector<double> pesos = grafo.getPesos(i);
-        for (int j = 0; j < vecinos.size(); j++) {
+        for (unsigned int j = 0; j < vecinos.size(); j++) {
             file << i << " " << vecinos[j] << " " << pesos[j] << std::endl;
         }
     }
@@ -130,10 +130,10 @@ void experimento(){
             archivo2 << "j=" << j;
             for (int k = 0; k < 50; k++) {
 
-                Grafo grafo = generarGrafo(pow(2, i), pow(2, j));
+                Grafo grafo = generarGrafo(pow(2, 4), pow(2, 4));
             
-                double tiempo_min = medirTiempo(dijkstraMinHeap, grafo);
-                archivo1 << "," << fixed << setprecision(2) << tiempo_min;
+                // double tiempo_min = medirTiempo(dijkstraMinHeap, grafo);
+                // archivo1 << "," << fixed << setprecision(2) << tiempo_min;
 
                 double tiempo_fib = medirTiempo(dijkstraFibHeap, grafo);
                 archivo2 << "," << fixed << setprecision(2) << tiempo_fib;

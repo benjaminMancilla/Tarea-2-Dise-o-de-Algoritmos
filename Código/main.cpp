@@ -16,12 +16,12 @@ void testGenerarGrafo(){
     vector<double> distancias = resultado.second;
 
     // Imprimir las distancias mínimas
-    for (int i = 0; i < distancias.size(); i++) {
+    for (unsigned int i = 0; i < distancias.size(); i++) {
         cout << "Distancia mínima de 0 a " << i << ": " << distancias[i] << endl;
     }
 
     // Imprimir los nodos previos
-    for (int i = 0; i < previos.size(); i++) {
+    for (unsigned int i = 0; i < previos.size(); i++) {
         cout << "Nodo previo de " << i << ": " << previos[i] << endl;
     }
 }
@@ -41,12 +41,12 @@ void testConocido() {
     auto [previos, distancias] = dijkstraFibHeap(grafo);
 
     cout << "Los resultados de los nodos:\n";
-    for (int i = 0; i < previos.size(); ++i) {
+    for (unsigned int i = 0; i < previos.size(); ++i) {
         cout << "Nodo " << i << ": " << previos[i] << " (esperado: " << previosConocidos[i] << ")\n";
     }
 
     cout << "Los resultados de las distancias:\n";
-    for (int i = 0; i < distancias.size(); ++i) {
+    for (unsigned int i = 0; i < distancias.size(); ++i) {
         cout << "Nodo " << i << ": " << distancias[i] << " (esperado: " << distanciasConocidas[i] << ")\n";
     }
 
@@ -61,12 +61,12 @@ void testSimple() {
     pair<vector<int>,vector<double>> par = dijkstraFibHeap(grafo);
 
     cout << "Los resultados de los nodos previos:\n";
-    for (int i = 0; i < par.first.size(); ++i) {
+    for (unsigned int i = 0; i < par.first.size(); ++i) {
         cout << "Nodo " << i << ": " << par.first[i] << "\n";
     }
 
     cout << "Los resultados de las distancias:\n";
-    for (int i = 0; i < par.second.size(); ++i) {
+    for (unsigned int i = 0; i < par.second.size(); ++i) {
         cout << "Nodo " << i << ": " << par.second[i] << "\n";
     }
 }
@@ -74,7 +74,7 @@ void testSimple() {
 
 int main() {
 
-    testSimple();
+    experimento(); 
     
     return 0;
 }

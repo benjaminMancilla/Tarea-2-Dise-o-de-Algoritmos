@@ -18,12 +18,22 @@ struct NodeFib {
         : data(p), parent(nullptr), child(nullptr), left(this), right(this), degree(0), mark(false) {}
 };
 
+
+
 class FibonacciHeap {
 private:
     NodeFib* min;
     int n;
 
     void insertIntoRootList(NodeFib* x) {
+        if (x == nullptr) {
+            std::cerr << "Error: node is nullptr in insertIntoRootList\n";
+            return;
+        }
+        if (min == nullptr) {
+            std::cerr << "Error: min is nullptr in insertIntoRootList\n";
+            return;
+        }
         if (!min) {
             min = x;
         } else {
@@ -89,17 +99,23 @@ public:
         }
 
         H->n = H1->n + H2->n;
+        delete H1;
+        delete H2;
         return H;
     }
 
 
     //linkea dos arboles del mismo degree
     void link(NodeFib* y, NodeFib* x) {
+        if (y == nullptr || x == nullptr || y->data == nullptr || x->data == nullptr) {
+            std::cerr << "Error: y, x, y->data, or x->data is nullptr in link\n";
+            return;
+        }
         y->left->right = y->right;
         y->right->left = y->left;
 
         y->parent = x;
-        if (!x->child) {
+        if (x->child == nullptr) {
             x->child = y;
             y->right = y;
             y->left = y;
@@ -112,20 +128,11 @@ public:
         x->degree++;
         y->mark = false;
     }
-
     
     void consolidate() {
         int D = static_cast<int>(std::log2(n)) + 1;
         std::vector<NodeFib*> A(D, nullptr);
 
-        /*
-        // Initialize the array A
-        for (int i = 0; i <= D; ++i) {
-            A[i] = nullptr;
-        }
-        */
-
-        // guardo nodos en root list
         std::vector<NodeFib*> rootNodes;
         NodeFib* x = min;
         if (x) {
@@ -135,27 +142,49 @@ public:
             } while (x != min);
         }
 
-        // para cada nodo en root list
+        cout << "Root nodes: " << rootNodes.size() << endl;
+
         for (NodeFib* w : rootNodes) {
-            NodeFib* x = w;
-            int d = x->degree;
+            NodeFib* xx = w;
+            int d = xx->degree;
+            
             while (A[d] != nullptr) {
                 NodeFib* y = A[d];
-                if (x->data->distancia > y->data->distancia){
+                cout << "A[" << d << "]: " << A[d] << endl;
+
+
+                // Depuración: Imprimir estado de los punteros
+                if (xx == nullptr) {
+                    std::cerr << "Error: x is nullptr\n";
+                    return;
+                }
+                if (y == nullptr) {
+                    std::cerr << "Error: y is nullptr\n";
+                    return;
+                }
+                if (xx->data == nullptr) {
+                    std::cerr << "Error: x->data is nullptr\n";
+                    return;
+                }
+                if (y->data == nullptr) {
+                    std::cerr << "Error: y->data is nullptr\n";
+                    return;
+                }
+
+                if (xx->data->distancia > y->data->distancia) {
                     std::swap(x, y);
                 }
-                link(y, x);
+                link(y, xx);
                 A[d] = nullptr;
                 d++;
             }
-            A[d] = x;
+            A[d] = xx;
         }
 
-        //reconstruyo el nodo
         min = nullptr;
         for (NodeFib* node : A) {
-            if (node!=nullptr) {
-                if (min==nullptr) {
+            if (node != nullptr) {
+                if (min == nullptr) {
                     node->left = node;
                     node->right = node;
                     min = node;
@@ -168,6 +197,7 @@ public:
             }
         }
     }
+
 
     // Extraer minimo
     NodeFib* extractMin() {
@@ -289,7 +319,7 @@ pair<vector<int>,vector<double>> dijkstraFibHeap(Grafo& grafo) {
         vector<double>& pesos = grafo.getPesos(v);
 
         // Paso 6b: Relajar todas las aristas adyacentes al nodo actual
-        for (int i = 0; i < vecinos.size(); ++i) {
+        for (unsigned int i = 0; i < vecinos.size(); ++i) {
 
             int u = vecinos[i];// Nodo vecino
             double peso = pesos[i];// Peso de la arista
