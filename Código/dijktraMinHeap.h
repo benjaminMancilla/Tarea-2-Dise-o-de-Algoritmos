@@ -43,6 +43,18 @@ public:
         return heap.empty();
     }
 
+
+    // Método para construir el heap a partir de un vector de pares (heapify)
+    void buildHeap(vector<Par>& pares) {
+        heap = pares;
+        for (int i = 0; i < heap.size(); ++i) {
+            pos[heap[i].nodo] = i;
+        }
+        for (int i = padre(heap.size() - 1); i >= 0; --i) {
+            siftDown(i);
+        }
+    }
+
 private:
     // Método para mantener la propiedad del Heap (subir un nodo)
     void siftUp(int i) {
@@ -71,6 +83,8 @@ private:
         }
     }
 
+    
+
     // Métodos para calcular índices de padres e hijos
     int padre(int i) {
         return (i - 1) / 2;
@@ -94,14 +108,19 @@ pair<vector<int>, vector<double>> dijkstraMinHeap(Grafo& grafo) {
 
     // Paso 3: Inicializar la distancia del nodo raíz como 0
     distancias[0] = 0.0;
-    heap.insertar(Par(0.0, 0));
 
+    vector<Par> pares(V);
+    pares[0] = Par(0.0, 0);
     // Paso 4: Inicializar las distancias mínimas para cada nodo
     for (int v = 1; v < V; v++) {
         // Agregar el par (distancia = ∞, nodo = i) a Q
-        heap.insertar(Par(distancias[v], v));
+        pares[v] = Par(distancias[v], v);
     }
 
+    // Paso 5: Construir el Heap a partir del vector de pares (heapify)
+    heap.buildHeap(pares);
+
+    
     // Paso 6: Ejecutar el algoritmo de Dijkstra
     while (!heap.isEmpty()) {
         // Paso 6a: Obtener el par con la distancia mínima
@@ -127,5 +146,7 @@ pair<vector<int>, vector<double>> dijkstraMinHeap(Grafo& grafo) {
     // Paso 7: Retornar un par con los arreglos previos y distancias
     return {previos, distancias};
 }
+
+
 
 #endif

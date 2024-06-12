@@ -95,6 +95,7 @@ struct Par {
     double distancia;  // Distancia mínima desde el nodo de origen
     int nodo;  // Índice del nodo en el grafo
 
+    Par() : distancia(numeric_limits<double>::max()), nodo(-1) {}  // Constructor predeterminado
     Par(double distancia, int nodo) : distancia(distancia), nodo(nodo) {}
 };
 
